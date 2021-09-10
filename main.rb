@@ -8,7 +8,7 @@ class Scraping
 
   def initialize(url)
     Capybara.register_driver :poltergeist do |app|
-      Capybara::Poltergeist::Driver.new(app, {inspector: true, js_errors: false})
+      Capybara::Poltergeist::Driver.new(app, { inspector: true, js_errors: false })
     end
     Capybara.javascript_driver = :poltergeist
     @page = Capybara::Session.new(:poltergeist)
@@ -25,6 +25,9 @@ class Scraping
       sikikin_and_reikin: '/html/body/div[1]/main/article/div[2]/div[2]/table/tbody/tr[6]/td',
       tyukai_tesuryo: '/html/body/div[1]/main/article/div[2]/div[2]/table/tbody/tr[7]/td',
       hosyokin: '/html/body/div[1]/main/article/div[2]/div[2]/table/tbody/tr[8]/td',
+      address: '/html/body/div[1]/main/article/div[2]/table/tbody/tr[1]/td/div[2]',
+      transfer: '/html/body/div[1]/main/article/div[2]/table/tbody/tr[1]/td/ul',
+      initial_fee: '/html/body/div[5]/div[1]/div[2]/div[2]/div[1]/div/header/div[2]/div/strong'
 
     }
   end
@@ -37,8 +40,10 @@ class Scraping
       madori: madori,
       sikikin_and_reikin: sikikin_and_reikin,
       tyukai_tesuryo: tyukai_tesuryo,
-      hosyokin: hosyokin
-
+      hosyokin: hosyokin,
+      transfer: transfer,
+      address: address,
+      initial_fee: initial_fee
     }
   end
 
@@ -74,6 +79,19 @@ class Scraping
 
   def hosyokin
     scraping_data(xpaths[:hosyokin])
+  end
+
+  def transfer
+    row = page.find(:xpath, xpaths[:transfer]).all('li')
+    row.map { |cell| cell.text }
+  end
+
+  def address
+    scraping_data(xpaths[:address])
+  end
+
+  def initial_fee
+    scraping_data(xpaths[:initial_fee])
   end
 end
 
